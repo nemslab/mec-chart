@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mec-chart.fullname" . }}
+  labels:
+    {{- include "mec-chart.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "mec-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "mec-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "mec-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: listen
+              containerPort:  {{ .Values.podContainer.port }}
+            - name: gtp
+              containerPort:  {{ .Values.podContainer.portGTP }}
+          livenessProbe:
+            exec:
+              command:
+              - ls
+              - /app
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+              - ls
+              - /app
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: "MAX_CLIENTS"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['MAX_CLIENTS']
+          - name: "UPLANE_CPLANE"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['UPLANE_CPLANE']
+          - name: "BLOCK_UNSUBSCRIBED"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['BLOCK_UNSUBSCRIBED']
+          - name: "UE_NETMASK"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['UE_NETMASK']
+          - name: "UE_SUBNET"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['UE_SUBNET']
+          - name: "CORE_IP"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['CORE_IP']
+          - name: "CORE_SEND_PORT"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['CORE_SEND_PORT']
+          - name: "ENB_IP"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['ENB_IP']
+          - name: "MEC_IP"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['MEC_IP']
+          - name: "MEC_LISTEN_PORT"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['MEC_LISTEN_PORT']
+          - name: "MEC_SEND_PORT"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['MEC_SEND_PORT']
+          - name: "SERVICE_SUBNET"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['SERVICE_SUBNET']
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
