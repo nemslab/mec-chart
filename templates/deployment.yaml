@@ -25,8 +25,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "mec-chart.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      hostNetwork: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -59,10 +58,14 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.annotations['MAX_CLIENTS']
-          - name: "UPLANE_CPLANE"
+          - name: "USING_USER_PLANE"
             valueFrom:
               fieldRef:
-                fieldPath: metadata.annotations['UPLANE_CPLANE']
+                fieldPath: metadata.annotations['USING_USER_PLANE']
+          - name: "BLOCK_UNSUBSCRIBED"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['BLOCK_UNSUBSCRIBED']
           - name: "UE_NETMASK"
             valueFrom:
               fieldRef:
@@ -98,7 +101,15 @@ spec:
           - name: "SERVICE_SUBNET"
             valueFrom:
               fieldRef:
-                fieldPath: metadata.annotations['SERVICE_SUBNET']
+                fieldPath: metadata.annotations['SERVICE_SUBNET'] 
+          volumeMounts:
+            - mountPath: /lib/modules
+              name: kernel-modules 
+      volumes:
+        - name: kernel-modules
+          hostPath:
+            path: /lib/modules
+            type: Directory
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
