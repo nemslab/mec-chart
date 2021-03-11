@@ -31,6 +31,8 @@ podAnnotations: {
   # Basic settings
   'MAX_CLIENTS': '30',
   # User - plane mode or Control - plane more
+  #'USING_USER_PLANE': 'false',
+  #'BLOCK_UNSUBSCRIBED': 'false',
   'UPLANE_CPLANE': '2',
   # IP and port settings
   'UE_NETMASK': '24',
@@ -45,9 +47,9 @@ podAnnotations: {
   'SERVICE_SUBNET': '172.17.1.1/24'
 }
 
-podSecurityContext: {
-  'privileged': true
-}
+#podSecurityPolicy: {
+#  'privileged': true
+#}
   # fsGroup: 2000
 
 # Enable all linux capabilities for gtp module 
@@ -55,6 +57,7 @@ securityContext:
   capabilities:
     add:
     - ALL
+  # allowPrivilegeEscalation: true
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
