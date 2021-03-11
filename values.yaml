@@ -8,7 +8,7 @@ image:
   repository: nemsnctu/mec
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: lastversion
 
 imagePullSecrets: []
 nameOverride: ""
@@ -31,8 +31,7 @@ podAnnotations: {
   # Basic settings
   'MAX_CLIENTS': '30',
   # User - plane mode or Control - plane more
-  'USING_USER_PLANE': 'false',
-  'BLOCK_UNSUBSCRIBED': 'false',
+  'UPLANE_CPLANE': '2',
   # IP and port settings
   'UE_NETMASK': '24',
   'UE_SUBNET': '10.0.0.0',
@@ -46,9 +45,9 @@ podAnnotations: {
   'SERVICE_SUBNET': '172.17.1.1/24'
 }
 
-#podSecurityPolicy: {
-#  'privileged': true
-#}
+podSecurityContext: {
+  'privileged': true
+}
   # fsGroup: 2000
 
 # Enable all linux capabilities for gtp module 
@@ -56,7 +55,6 @@ securityContext:
   capabilities:
     add:
     - ALL
-  allowPrivilegeEscalation: true
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
