@@ -50,13 +50,3 @@ app.kubernetes.io/name: {{ include "mec-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "mec-chart.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "mec-chart.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}

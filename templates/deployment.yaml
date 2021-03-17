@@ -24,33 +24,29 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "mec-chart.serviceAccountName" . }}
-      #hostNetwork: true
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      hostNetwork: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: listen
-              containerPort:  {{ .Values.podContainer.port }}
-            - name: gtp
-              containerPort:  {{ .Values.podContainer.portGTP }}
           livenessProbe:
             exec:
               command:
               - ls
               - /app
-            initialDelaySeconds: 300
-            periodSeconds: 300
+            initialDelaySeconds: 5
+            periodSeconds: 5
           readinessProbe:
             exec:
               command:
               - ls
               - /app
-            initialDelaySeconds: 300
-            periodSeconds: 300
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -58,18 +54,18 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.annotations['MAX_CLIENTS']
-          - name: "UPLANE_CPLANE"
+          - name: "USING_USER_PLANE"
             valueFrom:
               fieldRef:
-                fieldPath: metadata.annotations['UPLANE_CPLANE']
-           #- name: "USING_USER_PLANE"
-            #valueFrom:
-            # fieldRef:
-            #   fieldPath: metadata.annotations['USING_USER_PLANE']
-           #- name: "BLOCK_UNSUBSCRIBED"
-           # valueFrom:
-           #   fieldRef:
-           #     fieldPath: metadata.annotations['BLOCK_UNSUBSCRIBED']
+                fieldPath: metadata.annotations['USING_USER_PLANE']
+          - name: "BLOCK_UNSUBSCRIBED"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.annotations['BLOCK_UNSUBSCRIBED']
+         # - name: "UPLANE_CPLANE"
+         #   valueFrom:
+         #     fieldRef:
+         #       fieldPath: metadata.annotations['UPLANE_CPLANE']
           - name: "UE_NETMASK"
             valueFrom:
               fieldRef:
@@ -105,10 +101,12 @@ spec:
           - name: "SERVICE_SUBNET"
             valueFrom:
               fieldRef:
-                fieldPath: metadata.annotations['SERVICE_SUBNET'] 
+                fieldPath: metadata.annotations['SERVICE_SUBNET']
           volumeMounts:
             - mountPath: /lib/modules
-              name: kernel-modules 
+              name: kernel-modules
+          #command: ["bash"]
+          #args: ["-c", "./Dispatcher/dispatcher.out"]
       volumes:
         - name: kernel-modules
           hostPath:
