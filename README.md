@@ -65,7 +65,7 @@ sudo apt-get install helm
 
 ## Usage
 ```
-helm install -f ./mec-chart/values.yaml mec ./mec-chart
+helm333 install -f ./mec-chart/values.yaml mec ./mec-chart
 ```
 
 ## Contact

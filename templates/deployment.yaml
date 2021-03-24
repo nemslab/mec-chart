@@ -62,10 +62,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.annotations['BLOCK_UNSUBSCRIBED']
-         # - name: "UPLANE_CPLANE"
-         #   valueFrom:
-         #     fieldRef:
-         #       fieldPath: metadata.annotations['UPLANE_CPLANE']
           - name: "UE_NETMASK"
             valueFrom:
               fieldRef:
@@ -105,8 +101,6 @@ spec:
           volumeMounts:
             - mountPath: /lib/modules
               name: kernel-modules
-          #command: ["bash"]
-          #args: ["-c", "./Dispatcher/dispatcher.out"]
       volumes:
         - name: kernel-modules
           hostPath:
