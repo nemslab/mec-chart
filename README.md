@@ -6,7 +6,7 @@ Mobile/Multi-access edge computing (MEC) is one key technology to achieve low-la
 
 We propose a middlebox approach for the MEC platform deployment in 4G LTE networks. It is standard-compliant and transparent to existing cellular network components, so they need not be modified. The platform sits on the S1 interface, which connects an LTE base station to its core network, and does traffic filtering, manipulation and forwarding. Such middlebox approach has low deployment cost and is easy to install. We have confirmed its viability on both OAI-based and commercial LTE platforms.
 
-This is a demo for MEC system wrapped in **Helm Chart**, and the Docker image is located in Docker Hub ([here](https://hub.docker.com/repository/docker/f26401004/mec)) for any research experiment. You are able to deploy MEC kernel module to any IoT devices or hosts to reproduce our MEC system kernel features: forwarding module, gtp tunneling module. 
+This is a demo for MEC system wrapped in **Helm Chart**, and the Docker image is located in Docker Hub ([here](https://hub.docker.com/r/nemsnctu/mec)) for any research experiment. You are able to deploy MEC kernel module to any IoT devices or hosts to reproduce our MEC system kernel features: forwarding module, gtp tunneling module. 
 
 ### Built with
 - Docker: a set of platform as a service products that use OS-level virtualization to deliver software in packages called containers.
